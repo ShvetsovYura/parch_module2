@@ -12,7 +12,9 @@
 Доступ к хранилищу данных осуществяется через router(mongos_router), который инкапсулирует работу с определенными инстансами БД
 
 Архитектурная схема (показано шардирование+репликация+кэширование):
-  https://drive.google.com/file/d/1IiUMlL9th6ZY7AsKI2UWP9fSjVOzrqgu/view?usp=sharing
+
+ [Схемы](https://drive.google.com/file/d/1IiUMlL9th6ZY7AsKI2UWP9fSjVOzrqgu/view?usp=sharing)
+  
 ![shard-replica-cache](img/task1-cache.webp)
 
 # Настройка и запуск
