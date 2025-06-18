@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"log/slog"
 	"math/rand/v2"
 	"net/http"
 	"net/http/httputil"
@@ -31,7 +32,7 @@ func findPath(cfg ProxyConfig, path string) (bool, *RouteItem) {
 	return false, nil
 }
 
-func NewProxy(target *url.URL, cfg ProxyConfig) *httputil.ReverseProxy {
+func NewProxy(target *url.URL) *httputil.ReverseProxy {
 
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.Director = func(r *http.Request) {
@@ -43,25 +44,45 @@ func NewProxy(target *url.URL, cfg ProxyConfig) *httputil.ReverseProxy {
 }
 
 func getTarget(cfg ProxyConfig, path string, is_use_microservices bool, trafficPercent float64) (*url.URL, error) {
+	monolithUrl, err := url.Parse(os.Getenv("MONOLITH_URL"))
 	if !is_use_microservices {
-		return url.Parse(os.Getenv("MONOLITH_URL"))
+		return monolithUrl, err
 	}
 	randomValue := rand.Float64()
 	if randomValue > trafficPercent {
-		return url.Parse(os.Getenv("MONOLITH_URL"))
+		return monolithUrl, err
 	}
 
 	ok, routePath := findPath(cfg, path)
 	if !ok {
-		return url.Parse(os.Getenv("MONOLITH_URL"))
+		return monolithUrl, err
 
 	}
 	return url.Parse(routePath.Target)
 }
 
 func main() {
-	trafficSplit, _ := strconv.ParseFloat(os.Getenv("MOVIES_MIGRATION_PERCENT"), 64)
-	cfg := ProxyConfig{
+	migraion_env := os.Getenv("MOVIES_MIGRATION_PERCENT")
+	port_env := os.Getenv("PORT")
+	is_gradual_migration := os.Getenv("GRADUAL_MIGRATION") == "true"
+
+	if migraion_env == "" {
+		migraion_env = "0"
+	}
+	if port_env == "" {
+		port_env = "8080"
+	}
+
+	port := ":" + port_env
+
+	slog.Info("Starting proxy service",
+		slog.String("migration percent", migraion_env),
+		slog.Bool("migration enabled", is_gradual_migration),
+		slog.String("webapi port", port),
+	)
+	trafficSplit, _ := strconv.ParseFloat(migraion_env, 64)
+	trafficSplit = trafficSplit / 100.0
+	routesConfig := ProxyConfig{
 		Routes: []RouteItem{
 			{
 				Name:   "Movie service",
@@ -86,13 +107,13 @@ func main() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		target, err := getTarget(cfg, req.URL.Path, os.Getenv("GRADUAL_MIGRATION") == "true", trafficSplit)
+		target, err := getTarget(routesConfig, req.URL.Path, is_gradual_migration, trafficSplit)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-
-		proxy := NewProxy(target, cfg)
+		slog.Info("Received request", slog.String("path", req.URL.Path), slog.String("to", target.Host))
+		proxy := NewProxy(target)
 		proxy.ServeHTTP(w, req)
 	})
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+	log.Fatal(http.ListenAndServe(port, nil))
 }
