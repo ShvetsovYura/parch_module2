@@ -47,6 +47,7 @@ type Subscription struct {
 
 func main() {
 	// Initialize database connection
+	time.Sleep(5 * time.Second)
 	initDB()
 	defer db.Close()
 
