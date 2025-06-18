@@ -1,0 +1,19 @@
+
+consumer:
+  bootstrap_servers: 127.0.0.1:9092
+  client_id: 'client'
+  auto_offset_reset: earliest
+  enable_autocommit: true
+  session_timeout_ms: 6000
+  group_id: 'consuerm_group'
+producer:
+  bootstrap_servers: 127.0.0.1:9092
+  acks: all
+topics: 
+  - movie-events
+  - user-events
+  - payment-events
+webapi:
+  listen: :8092
+common:
+  events_queue_size: 100
