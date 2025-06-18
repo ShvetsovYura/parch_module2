@@ -20,7 +20,6 @@ func NewEventsProducer(cfg types.ProducerConfig) *ClientProducer {
 		"bootstrap.servers": cfg.BootstrapServers,
 		"acks":              cfg.Acks,
 		"client.id":         cfg.ClientID,
-		// "security.protocol": "PLAINTEXT",
 	}
 
 	p, err := kafka.NewProducer(&cfgMap)

@@ -25,8 +25,7 @@ func NewEventsConsumer(topics []string, config types.ConsumerConfig) (*EventsCon
 		"auto.offset.reset":  config.AutoOffsetReset,
 		"enable.auto.commit": config.EnableAutoCommit,
 		"session.timeout.ms": config.SessionTimeoutMs,
-		// "security.protocol":  "PLAINTEXT",
-		"client.id": config.ClientID,
+		"client.id":          config.ClientID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create consumer: %s", err)
@@ -43,14 +42,15 @@ func (c *EventsConsumer) Run(ctx context.Context, wg *sync.WaitGroup) error {
 	if err != nil {
 		return fmt.Errorf("failed to subscribe to topic: %w", err)
 	}
-
+	slog.Info("Consumer running")
 	defer c.consumer.Close()
 
 	for {
 		msg, err := c.consumer.ReadMessage(100 * time.Millisecond)
 		if err == nil {
 			value := string(msg.Value)
-			slog.Info("Received message", slog.String("content", value), slog.String("topic", *msg.TopicPartition.Topic))
+			slog.Info("Consumer received message", slog.String("content",
+				value), slog.String("topic", *msg.TopicPartition.Topic))
 
 		} else {
 			// Handle errors

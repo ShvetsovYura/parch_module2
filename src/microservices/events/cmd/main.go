@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"oyevents/internal/consumer"
@@ -10,11 +9,13 @@ import (
 	"oyevents/internal/types"
 	"oyevents/internal/webapi"
 	"sync"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
 
 func main() {
+	time.Sleep(10 * time.Second) // wait kafka
 	data, err := os.ReadFile("config.yml")
 	if err != nil {
 		log.Fatalf("Failed to read config file: %v", err)
@@ -36,7 +37,6 @@ func main() {
 	}
 
 	events := make(chan types.EventMessage, cfg.CommonConfig.EventsQueueSize)
-	fmt.Println(cfg)
 	api := webapi.NewEventsWebapi(cfg.WebapiConfig, events)
 	p := producer.NewEventsProducer(cfg.ProducerConfig)
 	c, err := consumer.NewEventsConsumer(cfg.Topics, cfg.ConsumerConfig)
