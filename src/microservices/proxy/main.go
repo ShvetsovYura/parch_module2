@@ -102,6 +102,7 @@ func main() {
 			http.Error(w, "only GET", http.StatusMethodNotAllowed)
 			return
 		}
+		slog.Info("request to health-check")
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]bool{"status": true})
 	})
