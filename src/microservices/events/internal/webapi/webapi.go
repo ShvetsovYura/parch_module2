@@ -32,7 +32,6 @@ func (a *EventsWebapi) userCreateHandler(w http.ResponseWriter, r *http.Request)
 		Msg:   content,
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"status": "success"})
 }
 
@@ -46,7 +45,6 @@ func (a *EventsWebapi) paymentCreateHandler(w http.ResponseWriter, r *http.Reque
 		Topic: "payment-events",
 		Msg:   content,
 	}
-	w.WriteHeader(http.StatusCreated)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"status": "success"})
 }
