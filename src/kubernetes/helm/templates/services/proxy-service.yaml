@@ -39,9 +39,9 @@ spec:
         - name: EVENTS_SERVICE_URL
           value: "http://events-service:8082"
         - name: GRADUAL_MIGRATION
-          value: "true"
+          value: "{{ .Values.config.gradualMigration }}"
         - name: MOVIES_MIGRATION_PERCENT
-          value: "100"
+          value: "{{ .Values.config.moviesMigrationPercent }}"
         envFrom:
         - configMapRef:
             name: cinemaabyss-config
