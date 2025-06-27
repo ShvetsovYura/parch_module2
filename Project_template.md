@@ -1,11 +1,15 @@
 ## Изучите [README.md](.\README.md) файл и структуру проекта.
+[![Docker Build and Push](https://github.com/ShvetsovYura/parch_module2/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/ShvetsovYura/parch_module2/actions/workflows/docker-build-push.yml)
+
+[![API Tests](https://github.com/ShvetsovYura/parch_module2/actions/workflows/api-tests.yml/badge.svg?branch=cinema)](https://github.com/ShvetsovYura/parch_module2/actions/workflows/api-tests.yml)
+
 
 # Задание 1
 
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
 Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
+[ссылка на файл](diagrams/containers.puml)
 
 # Задание 2
 
@@ -58,6 +62,16 @@
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka из UI http://localhost:8090 
+
+![результаты тестов](img/2_tests_result.png)
+
+![состояние топиков](img/2_kafka_ui_topics.png)
+
+![сообщение в топике movie-events](img/2_kafka_ui_movie_events.png)
+
+![состояние в топике payment-events](img/2_kafka_ui_payment_events.png)
+
+![состояние в топике user-events](img/2_kafka_ui_user_events.png)
 
 # Задание 3
 
@@ -275,6 +289,9 @@ cat .docker/config.json | base64
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
+![результат вызова https://cinemaabyss.example.com/api/movies](img/3_kuber_movies_list.png)
+
+![события в сервисе events-service](img/3_kuber_events.png)
 
 # Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -349,6 +366,10 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+
+![результат вызова https://cinemaabyss.example.com/api/movies](img/4_helm_all_movies_list.png)
+
+![вывод результата деплоя](img/4_helm_deploy_log.png)
 
 ## Удаляем все
 
