@@ -5,7 +5,8 @@ global:
 
 # Image pull secrets
 imagePullSecrets:
-  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6
+  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6ICJVMmgyWlhSemIzWlpkWEpoT21kb2NGOUtOekZFVkVnMk1WbDRjblJzVlVaV1JXdGtSbXh6V1hwNmIyTXlXWFV4YmxORmRFND0iCgkJfQoJfQp9
+
 # Database configuration
 database:
   host: postgres
@@ -33,7 +34,7 @@ database:
 monolith:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/monolith
+    repository: ghcr.io/shvetsovyura/parch_module2/monolith
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -53,7 +54,7 @@ monolith:
 proxyService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/proxy-service
+    repository: ghcr.io/shvetsovyura/parch_module2/proxy-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -73,7 +74,7 @@ proxyService:
 moviesService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/movies-service
+    repository: ghcr.io/shvetsovyura/parch_module2/movies-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -93,7 +94,7 @@ moviesService:
 eventsService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/events-service
+    repository: ghcr.io/shvetsovyura/parch_module2/events-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -177,6 +178,10 @@ ingress:
           pathType: Prefix
           service: events-service
           port: 8082
+        - path: /api/movies/health
+          pathType: Prefix
+          service: movies-service
+          port: 8081
 
 # Application configuration
 config:

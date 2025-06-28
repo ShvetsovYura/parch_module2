@@ -1,0 +1,44 @@
+@startuml Агрегатор видео
+!include ./C4/C4_Container.puml
+
+Person(user, "user", "")
+
+Container(gateway, "API Gateway","")
+
+
+System_Boundary(system, "Кинобездна") {
+    Container(user_svc, "Сервис пользователей", "регистрация, авторизация, аутентификация")
+    Container(payment_svc, "Сервис управления платежами")
+    Container(movies_svc,"Movies Service", "Сервис работы с данными о фильмах")
+    Container(recommendation_svc, "Recommendation Service", "Go", "Сервис управления рекомендациями")
+    Container(video_svc, "Управление видео-контентом")
+    Container(loyalty_svc, "Loyalty Service", "Python", "Работа со скидками, акциями, промо и тд")
+    Container(subscribe_svc, "Сервис подписок")
+
+    ContainerDb(user_db, "User DB", "PostgreSQL", "информация о пользователях, ролях")
+    ContainerDb(film_meta_db, "Metadata DB", "PostgreSQL", "метаданные о фильмах")
+    ContainerDb(cache, "in-memory cache", "Redis")
+    ContainerDb(loyalty_db, "Loyalty DB", "PostgreSQL")
+    ContainerDb(subscribe_db, "Подписки", "PostgreSQL")
+    ContainerDb(s3, "S3")
+}
+
+System_Ext(external_payment, "Платежные системы")
+System_Ext(external_video, "Онлайн кинотеатры")
+System_Ext(external_recomendation, "Внешняя рекомандательная система")
+
+Rel(user, gateway, "use")
+Rel(gateway, system, "use")
+
+
+Rel(user_svc, user_db, "чтение / зарись данных", "sql")
+Rel(film_meta_svc, film_meta_db, "use")
+Rel(payment_svc, external_payment, "use")
+Rel(external_recomendation, recommendation_svc,"Отправка событий о новых рекоменадциях", "Kafka")
+Rel(video_svc, external_video, "use")
+Rel(video_svc, s3, "use")
+Rel(recommendation_svc, cache, "кэширование рекомендаций")
+Rel(user_svc, cache, "запрос рекомендаций для пользователя")
+Rel(subscribe_svc, subscribe_db, "use")
+Rel(loyalty_svc, loyalty_db, "use")
+@enduml
